@@ -19,6 +19,7 @@
 */
 
 #include "module.h"
+#include "../fe-common/core/fe-windows.h"
 
 #include "icb-commands.h"
 #include "icb-servers.h"
@@ -101,6 +102,24 @@ static void cmd_beep(const char *data, ICB_SERVER_REC *server)
 	}
 }
 
+static void cmd_window(const char *data, ICB_SERVER_REC *server)
+{
+	CMD_ICB_SERVER(server);
+
+	/*
+	 * Return an error in case the '/window close' command has been
+	 * issued in your active ICB group window.  In ICB you always
+	 * need to be joined to one group.
+	 */
+	if (*data != '\0' && (*data == 'c' || *data == 'C')) {
+		if (!strcmp(window_get_active_name(active_win),
+		    server->group->name)) {
+			cmd_return_error(CMDERR_ILLEGAL_PROTO);
+			signal_stop();
+		}
+	}
+}
+
 void icb_commands_init(void)
 {
 	char **cmd;
@@ -116,6 +135,7 @@ void icb_commands_init(void)
         command_bind_icb("kick", NULL, (SIGNAL_FUNC) cmd_boot);
         command_bind_icb("g", NULL, (SIGNAL_FUNC) cmd_group);
         command_bind_icb("beep", NULL, (SIGNAL_FUNC) cmd_beep);
+	command_bind_icb("window", NULL, (SIGNAL_FUNC) cmd_window);
 
 	command_set_options("connect", "+icbnet");
 }
@@ -134,4 +154,5 @@ void icb_commands_deinit(void)
         command_unbind("kick", (SIGNAL_FUNC) cmd_boot);
         command_unbind("g", (SIGNAL_FUNC) cmd_group);
         command_unbind("beep", (SIGNAL_FUNC) cmd_beep);
+	command_unbind("window", (SIGNAL_FUNC) cmd_window);
 }
