@@ -1,5 +1,5 @@
 /*
- icb-servers.c : irssi
+ icb-commands.c : irssi
 
     Copyright (C) 2001 Timo Sirainen
 
