@@ -120,12 +120,8 @@ static void event_personal(ICB_SERVER_REC *server, const char *data)
 	char **args;
 
 	args = icb_split(data, 2);
-#if IRSSI_VERSION_DATE > 20141206
 	signal_emit("message private", 5, server, args[1], args[0], "",
 		    server->nick);
-#else
-	signal_emit("message private", 4, server, args[1], args[0], "");
-#endif
         icb_split_free(args);
 }
 
