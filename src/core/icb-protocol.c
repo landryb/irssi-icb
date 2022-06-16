@@ -340,8 +340,8 @@ static void sig_server_connected(ICB_SERVER_REC *server)
                 return;
 
 	server->readtag =
-		g_input_add(net_sendbuffer_handle(server->handle),
-			    G_INPUT_READ,
+		i_input_add(net_sendbuffer_handle(server->handle),
+			    I_INPUT_READ,
 			    (GInputFunction) icb_parse_incoming, server);
 }
 
